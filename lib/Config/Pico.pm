@@ -108,13 +108,14 @@ JSON, etc. as you already know Perl.
 
 =head2 pico([$dir,] $file)
 
-The first argument C<$dir> is optional and specify a base path.
+The first argument C<$dir> is optional and specifies a base path.
 This would help you when you have variations in environments
-which need a set of configuration files, respectively.
+which need a set of configuration files respectively.
 
     my $conf = pico("config/$ENV{PLACK_ENV}", "dbi.pl");
 
-The last argument C<$file> is a filename which is written in Perl to load.
+The last argument C<$file> specifies a filename of configuration
+written in Perl to load.
 
     my $conf = pico $file;
 
@@ -122,7 +123,7 @@ is equivalent to
 
     my $conf = do $file;
 
-Another difference between those two is that, in case of C<$file>
+Another difference between those two is that, in case that C<$file>
 is not exist, C<pico()> raises an error while C<do()> doesn't.
 It'd be still easy for you to switch off the module and call C<do()>
 instead of C<pico()>.
