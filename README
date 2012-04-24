@@ -75,7 +75,7 @@ FUNCTION
 
         my $conf = pico("config/$ENV{PLACK_ENV}", "dbi.pl");
 
-    The last argument $file is a filename which is wrtten in Perl to load.
+    The last argument $file is a filename which is written in Perl to load.
 
         my $conf = pico $file;
 
@@ -87,7 +87,6 @@ FUNCTION
     exist, "pico()" raises an error while "do()" doesn't. It'd be still easy
     for you to switch off the module and call "do()" instead of "pico()".
 
-SYNTAX CHECK
 AUTHOR
     Yusuke Kawasaki http://www.kawa.net/
 
