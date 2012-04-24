@@ -114,7 +114,7 @@ which need a set of configuration files, respectively.
 
     my $conf = pico("config/$ENV{PLACK_ENV}", "dbi.pl");
 
-The last argument C<$file> is a filename which is wrtten in Perl to load.
+The last argument C<$file> is a filename which is written in Perl to load.
 
     my $conf = pico $file;
 
@@ -126,8 +126,6 @@ Another difference between those two is that, in case of C<$file>
 is not exist, C<pico()> raises an error while C<do()> doesn't.
 It'd be still easy for you to switch off the module and call C<do()>
 instead of C<pico()>.
-
-=head1 SYNTAX CHECK
 
 =head1 AUTHOR
 
