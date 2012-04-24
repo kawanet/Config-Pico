@@ -1,0 +1,103 @@
+NAME
+    Config::Pico - Perl Interpretative COnfiguration: do "config.pl"
+
+SYNOPSIS
+        use Config::Pico;
+    
+        # general use
+        @config = pico($basedir, "config.pl");
+
+        # user agent
+        $ua = LWP::UserAgent->new(pico "lwp.pl");
+
+        # logger
+        $logger = Log::Dispatch->new(pico "log.pl");
+
+        # database
+        $dbh = DBI->connect(pico "dbi.pl");
+
+    lwp.pl configuration for LWP::UserAgent
+
+        +(
+            agent        => "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
+            max_redirect => 5,
+            timeout      => 30,
+            env_proxy    => 1,
+        );
+
+    log.pl configuration for Log::Dispatch
+
+        +(outputs => [
+            ['File',   min_level => 'debug', filename => 'logfile'],
+            ['Screen', min_level => 'warning'],
+        ]);
+
+    dbi.pl configuration for DBI, DBD::SQLite
+
+        +(
+            "dbi:SQLite:dbname=dbfile", "", "", {
+                AutoCommit        =>  1,
+                RaiseError        =>  1,
+                sqlite_unicode                   => 1,
+                sqlite_allow_multiple_statements => 1,
+            },
+        );
+
+    another configuration for DBD::MySQL
+
+        local %_ = (
+            driver    =>  'mysql',
+            database  =>  'xxxx',
+            host      =>  'localhost',
+            port      =>  '3306',
+            username  =>  'xxxxxx',
+            password  =>  'xxxxxxxx',
+            attr      =>  {
+                AutoCommit        =>  1,
+                RaiseError        =>  1,
+                mysql_enable_utf8 =>  1,
+            },
+        );
+    
+        +("dbi:$_{driver}:database=$_{database};host=$_{host};port=$_{port}", $_{username}, $_{password}, $_{attr});
+
+DESCRIPTION
+    Use Perl as a DSL to configure you app. This module exports "pico()"
+    function which loads a configuration file written in Perl syntax. You
+    don't have to learn other languages/notations like YAML, XML, JSON, etc.
+    as you already know Perl.
+
+FUNCTION
+  pico([$dir,] $file)
+    The first argument $dir is optional and specify a base path. This would
+    help you when you have variations in environments which need a set of
+    configuration files, respectively.
+
+        my $conf = pico("config/$ENV{PLACK_ENV}", "dbi.pl");
+
+    The last argument $file is a filename which is wrtten in Perl to load.
+
+        my $conf = pico $file;
+
+    is equivalent to
+
+        my $conf = do $file;
+
+    Another difference between those two is that, in case of $file is not
+    exist, "pico()" raises an error while "do()" doesn't. It'd be still easy
+    for you to switch off the module and call "do()" instead of "pico()".
+
+SYNTAX CHECK
+AUTHOR
+    Yusuke Kawasaki http://www.kawa.net/
+
+COPYRIGHT
+    The following copyright notice applies to all the files provided in this
+    distribution, including binary files, unless explicitly noted otherwise.
+
+    Copyright 2012 Yusuke Kawasaki
+
+LICENSE
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
