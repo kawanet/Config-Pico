@@ -1,23 +1,32 @@
 NAME
-    Config::Pico - Perl Interpretative COnfiguration: do "config.pl"
+    Config::Pico - Pure Perl Interpretative COnfiguration = do "config.pl"
 
 SYNOPSIS
         use Config::Pico;
     
         # general use
         @config = pico($basedir, "config.pl");
-
+    
         # user agent
-        $ua = LWP::UserAgent->new(pico "lwp.pl");
-
+        $ua = LWP::UserAgent->new(pico "ua.pl");
+    
         # logger
-        $logger = Log::Dispatch->new(pico "log.pl");
-
+        $logger = Log::Dispatch->new(pico "logger.pl");
+    
+        # memcache
+        $memd = Cache::Memcached->new(pico "memd.pl");
+    
         # database
-        $dbh = DBI->connect(pico "dbi.pl");
+        $dbh = DBI->connect(pico "dbh.pl");
 
-    lwp.pl configuration for LWP::UserAgent
+DESCRIPTION
+    Use pure Perl to configure your app. This module exports "pico()"
+    function which loads a configuration file written in Perl syntax. You
+    don't have to learn any other languages/notations like YAML, XML, JSON,
+    etc. to configure your Perl app as you already know Perl.
 
+EXAMPLE CONFIGURATIONS
+  ua.pl for LWP::UserAgent
         +(
             agent        => "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
             max_redirect => 5,
@@ -25,15 +34,30 @@ SYNOPSIS
             env_proxy    => 1,
         );
 
-    log.pl configuration for Log::Dispatch
+    This literary returns an array which represents four of key/value pair
+    arguments to set up a new LWP::UserAgent instance. See LWP::UserAgent
+    for more options.
 
+  logger.pl for Log::Dispatch
         +(outputs => [
             ['File',   min_level => 'debug', filename => 'logfile'],
             ['Screen', min_level => 'warning'],
         ]);
 
-    dbi.pl configuration for DBI, DBD::SQLite
+    Yes, any Perl syntaxs, including "[]" arrayref etc., are available as
+    it's a Perl script. See Log::Dispatch for more options.
 
+  memd.pl for Cache::Memcached
+        +{
+            'servers' => [ "10.0.0.15:11211", "10.0.0.15:11212", "/var/sock/memcached",
+                           "10.0.0.17:11211", [ "10.0.0.17:11211", 3 ] ],
+            'debug' => 0,
+            'compress_threshold' => 10_000,
+        }
+
+    This represents a hashref. See Cache::Memcached for more options.
+
+  dbh.pl for DBD::SQLite
         +(
             "dbi:SQLite:dbname=dbfile", "", "", {
                 AutoCommit        =>  1,
@@ -43,8 +67,9 @@ SYNOPSIS
             },
         );
 
-    another configuration for DBD::MySQL
+    See DBI and DBD::SQLite for more options.
 
+  dbh.pl for DBD::mysql
         local %_ = (
             driver    =>  'mysql',
             database  =>  'xxxx',
@@ -61,32 +86,32 @@ SYNOPSIS
     
         +("dbi:$_{driver}:database=$_{database};host=$_{host};port=$_{port}", $_{username}, $_{password}, $_{attr});
 
-DESCRIPTION
-    Use Perl as a DSL to configure you app. This module exports "pico()"
-    function which loads a configuration file written in Perl syntax. You
-    don't have to learn other languages/notations like YAML, XML, JSON, etc.
-    as you already know Perl.
+    Note that this uses a local variable which is easy for human to read.
+    The last line represents an array packed for DBI. See DBD::mysql for
+    more options.
 
 FUNCTION
   pico([$dir,] $file)
     The first argument $dir is optional and specifies a base path. This
-    would help you when you have variations in environments which need a set
-    of configuration files respectively.
+    would help you when you have variations in environments, e.g.
+    development/staging/production etc. Put configuration files in a
+    directory for each environments.
 
         my $conf = pico("config/$ENV{PLACK_ENV}", "dbi.pl");
 
-    The last argument $file specifies a filename of configuration written in
-    Perl to load.
+    The last argument $file specifies a filename of configuration file
+    written in Perl to load.
 
         my $conf = pico $file;
 
-    is equivalent to
+    In fact, this is equivalent to
 
         my $conf = do $file;
 
-    Another difference between those two is that, in case that $file is not
-    exist, "pico()" raises an error while "do()" doesn't. It'd be still easy
-    for you to switch off the module and call "do()" instead of "pico()".
+    The only difference between those two above is that, in a case that
+    $file is not exist, "pico()" raises an error while "do()" doesn't. It'd
+    be still easy for you to switch off the module and call "do()" instead
+    of "pico()".
 
 AUTHOR
     Yusuke Kawasaki http://www.kawa.net/
@@ -100,4 +125,9 @@ COPYRIGHT
 LICENSE
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
+
+SEE ALSO
+    Config::PP - This provides "config_set()" function which dump a pure
+    Perl file as well as "config_get()" function to load it like "pico()"
+    does.
 

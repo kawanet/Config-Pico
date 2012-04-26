@@ -9,6 +9,7 @@ doit () {
     $* || die "[ERROR:$?]"
 }
 
+[ -f Makefile ] && doit perl Makefile.PL
 [ -f Makefile ] && doit make clean
 [ -f Makefile.old ] && doit /bin/rm -f Makefile.old
 [ -f META.yml ] || doit touch META.yml

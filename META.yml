@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:               Config-Pico
 version:            0.01
-abstract:           Perl Interpretative COnfiguration: do "config.pl"
+abstract:           Pure Perl Interpretative COnfiguration = do "config.pl"
 author:
     - Yusuke Kawasaki
 license:            perl
@@ -10,7 +10,10 @@ configure_requires:
     ExtUtils::MakeMaker:  6.55
 build_requires:
     Test::More:  0
-requires:  {}
+requires:
+    Carp:        0
+    Exporter:    0
+    File::Spec:  0
 no_index:
     directory:
         - t
